@@ -19,7 +19,7 @@ const listingSchema = new Schema({
     },
     url: {
       type: String,
-      default: "https://via.placeholder.com/400",
+      default: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     },
   },
   price: {
@@ -36,6 +36,12 @@ const listingSchema = new Schema({
     trim: true,
   },
 });
+
+// ✅ Virtual property to handle nested image URLs
+listingSchema.virtual("imageUrl").get(function () {
+  return this.image?.url?.url || this.image?.url || "";
+});
+
 
 // ✅ Create and export model
 const Listing = mongoose.model("Listing", listingSchema);
