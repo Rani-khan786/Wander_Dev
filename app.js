@@ -46,19 +46,19 @@ app.use(methodOverride("_method"));
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   crypto: {
-    secret: "mysupersceretcode"
+    secret: process.env.SECRET,
   },
   touchAfter: 24 * 3600,
 });
 
-store.on("error", ()=>{
+store.on("error", (err)=>{
   console.log("ERROR in MONGO SESSION STORE" , err);
 })
 
 // session option
 const sessionOptions = {
   store,
-  secret: "mysupersceretcode",
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie : {
@@ -118,6 +118,9 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("error.ejs", { message });
 });
 
-app.listen(8080, () => {
-  console.log("🚀 Server is listening on port 8080");
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server is listening on port ${PORT}`);
 });
+
