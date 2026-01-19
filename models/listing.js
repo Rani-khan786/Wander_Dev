@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const Review = require("./model.js");
+const categories = require("../utils/categories.js");
 
-// ✅ Define Listing Schema
+//  Define Listing Schema
 const listingSchema = new Schema({
   title: {
     type: String,
@@ -13,14 +15,8 @@ const listingSchema = new Schema({
     trim: true,
   },
   image: {
-    filename: {
-      type: String,
-      default: "default-image",
-    },
-    url: {
-      type: String,
-      default: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-    },
+    url: String,
+    filename: String,
   },
   price: {
     type: Number,
@@ -35,13 +31,22 @@ const listingSchema = new Schema({
     type: String,
     trim: true,
   },
+   category: {
+    type: String,
+    enum: categories,
+    
+  },
+  reviews : [
+    {
+      type : Schema.Types.ObjectId, 
+      ref : "Review",
+    },
+  ],
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
-
-// ✅ Virtual property to handle nested image URLs
-listingSchema.virtual("imageUrl").get(function () {
-  return this.image?.url?.url || this.image?.url || "";
-});
-
 
 // ✅ Create and export model
 const Listing = mongoose.model("Listing", listingSchema);

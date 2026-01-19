@@ -17,3 +17,25 @@
     }, false);
   });
 })();
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const flash = document.querySelector(".flash-message");
+  const closeBtn = document.querySelector(".flash-close");
+
+  if (!flash) return;
+
+  const autoHide = setTimeout(() => {
+    flash.classList.add("hide");
+  }, 2500);
+
+  setTimeout(() => {
+    flash.remove();
+  }, 3200);
+
+  closeBtn?.addEventListener("click", () => {
+    clearTimeout(autoHide);
+    flash.classList.add("hide");
+    setTimeout(() => flash.remove(), 400);
+  });
+});

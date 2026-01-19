@@ -1,118 +1,346 @@
-body{
-    font-family: "Plus Jakarta Sans", sans-serif !important;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+body {
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .container {
-   flex: 1;
+  flex: 1;
 }
- /* navbar styling */
- .navbar{
-    height: 5rem ;
-    background-color: white;
- }
- .fa-compass{
-    color: #fe424d;
-    font-size: 2rem;
- }
- .nav-link{
-    color: #222222 !important;
- }
-/* 
- footer styling */
 
+/* navbar styling */
+.navbar {
+  height: 5rem;
+  background-color: white;
+}
+
+.fa-compass {
+  color: #fe424d;
+  font-size: 2rem;
+}
+
+.nav-link {
+  color: #222222 !important;
+}
+
+/* footer styling */
 .f-info-links a {
-text-decoration: none;
-color: #222222;
-} 
+  text-decoration: none;
+  color: #222222;
+}
 
 .f-info-links a:hover {
-text-decoration: underline;
-} 
+  text-decoration: underline;
+}
 
 .f-info-links,
 .f-info-socials,
 .f-info-brand {
-   width: 100%;
-   display: flex;
-   align-items: center;
-   justify-content: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 
 .f-info-socials i {
-   margin-right: 2rem;
-   font-size: 1.2rem;
+  margin-right: 2rem;
+  font-size: 1.2rem;
 }
 
-.f-info{
-   text-align: center;
-   height: 8rem;
-   background-color: #ebebeb;
-   display: flex;
-   flex-wrap: wrap;
-   justify-content: center;
-   align-items: space-evenly;
-   }
-
-  /* Cards   */
-  .card {
-   border: none !important;
-   margin-bottom: 2rem;
-
-  }
-
-  .card-img-top{
-   border-radius: 1rem !important;
-   width: 100% !important;
-   object-fit: cover !important;
-  }
-
-  .card-body {
-   padding: 0 !important;
+.f-info {
+  text-align: center;
+  height: 8rem;
+  background-color: #ebebeb;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: space-evenly;
 }
 
-.card-text p{
-   font-weight: 400 !important;
+/* Cards */
+.listing-card {
+  border: none !important;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.card-img-top {
+  height: 240px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+
+.card-body {
+  padding: 0 !important;
+}
+
+.card-text p {
+  font-weight: 400 !important;
 }
 
 .listing-link {
-text-decoration: none;
+  text-decoration: none;
 }
 
 /* card effect */
 .card-img-overlay {
-   opacity: 0;
+  opacity: 0;
 }
 
 .card-img-overlay:hover {
-   opacity: 0.2;
-   background-color: white;
+  opacity: 0.2;
+  background-color: white;
 }
- /* New Page */
-.add-btn{
-    background-color: #fe424d !important;
-   border: none !important;
+
+/* New Page */
+.add-btn {
+  background-color: #fe424d !important;
+  border: none !important;
 }
 
 /* edit page */
-.edit-btn{
-    background-color: #fe424d !important;
-    border: none !important;
+.edit-btn {
+  background-color: #fe424d !important;
+  border: none !important;
 }
 
 /* show page */
-.show-img{
-   height: 30vh;
-}
-
-.btns {
-   display: flex;
+.show-img {
+  height: 30vh;
 }
 
 .show-card {
-   padding-left: 0;
-   padding-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* listing hover zoom */
+.listing-card img {
+  transition: transform 0.4s ease;
+}
+
+.listing-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Flash container (centered) */
+.flash-wrapper {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1055;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+}
+
+/* Flash box — AUTO SIZE */
+.flash-message {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 12px 18px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Text */
+.flash-text {
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.45;
+}
+
+/* Icons */
+.flash-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.success-icon {
+  color: #1e7e34;
+}
+
+.error-icon {
+  color: #b02a37;
+}
+
+/* Close button */
+.flash-close {
+  background: rgba(0, 0, 0, 0.15);
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.flash-close:hover {
+  opacity: 1;
+}
+
+/* Hide animation */
+.flash-message.hide {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* ✅ FIXED SHOW PAGE BUTTON ALIGNMENT (Desktop like your old UI) */
+.btns {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.btns form {
+ margin: 0;
+ display: inline-flex;
+}
+
+.btns a,
+.btns button {
+  width: auto !important;
+  padding: 0.4rem 1.5rem;
+  border-radius: 0.5rem;
+}
+
+/* Submit button (keep normal on desktop) */
+.submit-btn {
+  width: auto !important;
+  padding: 0.4rem 1.5rem;
+  border-radius: 0.5rem;
+  display: inline-block;
+}
+
+/* ⭐ STAR RATING FIX (prevents overflow) */
+.starability-slot {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* ✅ Mobile Fix Only (do NOT disturb desktop UI) */
+@media (max-width: 576px) {
+  .btns {
+   justify-content: flex-start;
+    gap: 0.6rem;
+     
+  }
+
+  .btns a,
+  .btns button {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+/* Edit form button same style like show page buttons */
+.form-edit-btn {
+  width: auto !important;
+  padding: 0.4rem 1.5rem;
+  border-radius: 0.5rem;
+  display: inline-block;
+}
+
+/* Mobile: full width only on small screens */
+@media (max-width: 576px) {
+  .form-edit-btn {
+    width: 100% !important;
+  }
+}
+/* ===========================
+   DEFAULT (DESKTOP/LAPTOP)
+   keep original Bootstrap look
+=========================== */
+
+.glass-nav {
+  background: white !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.glass-collapse {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  box-shadow: none !important;
+}
+
+/* remove any animation effects for desktop */
+.navbar-collapse {
+  max-height: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  overflow: visible !important;
+  transition: none !important;
+}
+
+/* ===========================
+   MOBILE ONLY (Glass + Smooth Slide)
+=========================== */
+@media (max-width: 768px) {
+
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-collapse {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 18px;
+    padding: 12px;
+    margin-top: 10px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Smooth dropdown animation */
+  .navbar-collapse {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.35s ease;
+  }
+
+  .navbar-collapse.show {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* nav hover look only on mobile */
+  .navbar-nav .nav-link {
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .navbar-nav .nav-link:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  /* Search at bottom in mobile */
+  .search-form {
+    width: 100%;
+    margin-top: 12px;
+  }
 }

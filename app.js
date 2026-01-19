@@ -1,133 +1,123 @@
+
+  require('dotenv').config();
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 
-// MongoDB connection URL
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const listingsRouter = require("./routes/listing.js");
+const reviewsRouter = require("./routes/review.js");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");        
+const userRouter = require("./routes/user.js"); 
 
-// Connect to MongoDB
+
+// MongoDB connection
+
+const dbUrl = process.env.ATLASDB_URL;
+
 main()
-  .then(() => {
-    console.log("connected to DB");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(() => console.log("connected to DB"))
+  .catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
 }
 
-// Set EJS as the view engine
+// View engine
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
 app.use(express.static(path.join(__dirname, "public")));
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
-// Root route
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: {
+    secret: "mysupersceretcode"
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on("error", ()=>{
+  console.log("ERROR in MONGO SESSION STORE" , err);
+})
+
+// session option
+const sessionOptions = {
+  store,
+  secret: "mysupersceretcode",
+  resave: false,
+  saveUninitialized: true,
+  cookie : {
+    expires: Date.now() + 7*24 *60*60 *1000,
+    maxAge: 7*24 *60*60 *1000,
+    httpOnly: true,
+  },
+};
+
+// Root
 app.get("/", (req, res) => {
-  res.send("Hi, I am root");
-});
-
-// Route to display all listings
-app.get("/listings", async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render("listings/index.ejs", { allListings });
-});
-
-// New route
-app.get("/listings/new", (req, res) => {
-  res.render("listings/new.ejs");
-});
-
-// Show route
-app.get("/listings/:id", async (req, res) => {
-  let { id } = req.params;
-  const listing = await Listing.findById(id);
-  res.render("listings/show.ejs", { listing });
-});
-
-// ✅ Create route (Fixed)
-app.post(
-  "/listings",
-  wrapAsync(async (req, res, next) => {
-    console.log("Incoming form data:", req.body);
-
-    // Create new listing
-    const newListing = new Listing(req.body.listing);
-
-    // ✅ Handle nested image properly
-    if (req.body.listing.image && req.body.listing.image.url) {
-      newListing.image.url = req.body.listing.image.url;
-      newListing.image.filename = "listingimage";
-    }
-
-    await newListing.save();
-    console.log("✅ Saved listing:", newListing);
-
-    res.redirect(`/listings/${newListing._id}`);
-  })
-);
-
-// Edit route
-app.get("/listings/:id/edit", async (req, res) => {
-  let { id } = req.params;
-  const listing = await Listing.findById(id);
-  res.render("listings/edit.ejs", { listing });
-});
-
-// ✅ Update route (Fixed)
-app.put(
-  "/listings/:id",
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    console.log("Incoming edit data:", req.body);
-
-    const listing = await Listing.findByIdAndUpdate(id, req.body.listing, {
-      new: true,
-      runValidators: true,
-    });
-
-    // ✅ Handle nested image update
-    if (req.body.listing.image && req.body.listing.image.url) {
-      listing.image.url = req.body.listing.image.url;
-      listing.image.filename = "updated-image";
-      await listing.save();
-    }
-
-    console.log("✅ Updated listing:", listing);
-    res.redirect(`/listings/${listing._id}`);
-  })
-);
-
-// Delete route
-app.delete("/listings/:id", async (req, res) => {
-  let { id } = req.params;
-  let deletedListing = await Listing.findByIdAndDelete(id);
-  console.log(deletedListing);
   res.redirect("/listings");
 });
 
-// No route matches for incoming request
+
+
+app.use(session(sessionOptions));
+// flash message
+app.use(flash());
+
+
+// authentication using passport
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+   res.locals.currUser = req.user;
+  res.locals.error = req.flash("error");
+   next();
+});
+
+
+
+
+
+
+// Routes
+app.use("/listings", listingsRouter);
+app.use("/listings/:id/reviews", reviewsRouter);
+app.use("/", userRouter);
+
+// 404 handler
 app.use((req, res, next) => {
   next(new ExpressError(404, "Page not found"));
 });
 
-// Error handling middleware
+// Error handler
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message = "Something went wrong" } = err;
-  res.status(statusCode).send(message);
+  let { statusCode = 500, message = "Something went wrong" } = err;
+  res.status(statusCode).render("error.ejs", { message });
 });
 
-// Start server
 app.listen(8080, () => {
   console.log("🚀 Server is listening on port 8080");
 });

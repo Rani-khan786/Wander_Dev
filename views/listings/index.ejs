@@ -1,27 +1,143 @@
-<% layout('layouts/boilerplate') %>
+<% layout("layouts/boilerplate") %>
+<style>
+/* MAIN BAR */
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
 
-<body>
-  <div class="container mt-3">
-    <h3>All Listings</h3>
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-3">
-      <% for (let listing of allListings) { %>
-        <div class="col">
-          <div class="card h-100">
-            <img 
-  src="<%= listing.image && listing.image.url ? listing.image.url : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80' %>" 
-  class="card-img-top" 
-  alt="<%= listing.title %>" 
-  style="height: 20rem; object-fit: cover;"
-/>
+/* ICONS SCROLL */
+#filters {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  flex: 1;                 /* 👈 KEY LINE */
+  scrollbar-width: none;
+}
 
-            <div class="card-body">
-              <h5 class="card-title"><%= listing.title %></h5>
-              <p class="card-text">₹<%= listing.price.toLocaleString("en-IN") %> / night</p>
-              <a href="/listings/<%= listing._id %>" class="btn btn-primary w-100">View</a>
-            </div>
-          </div>
-        </div>
-      <% } %>
+#filters::-webkit-scrollbar {
+  display: none;
+}
+
+/* ICON STYLE */
+.filters {
+  text-align: center;
+  opacity: 0.7;
+  min-width: 70px;
+}
+
+.filters:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.filters p {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* TAX SWITCH */
+.tax-toggle {
+  border: 1px solid black;
+  border-radius: 3rem;
+  padding: 0.6rem 1.2rem;
+  white-space: nowrap;
+  flex-shrink: 0;          /* 👈 PREVENTS WRAP */
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .tax-toggle {
+    display: none; /* Airbnb hides it on mobile */
+  }
+}
+.filters.active {
+  opacity: 1;
+  border-bottom: 2px solid black;
+}
+</style>
+ <div class="filters-bar">
+  <!-- ICONS -->
+  <div id="filters">
+    <% const categoryIcons = {
+      Trending: "fa-fire",
+      Rooms: "fa-bed",
+      "Iconic Cities": "fa-mountain-city",
+      Mountains: "fa-mountain",
+      Castles: "fa-chess-rook",
+      "Amazing Pools": "fa-person-swimming",
+      Camping: "fa-campground",
+      Farms: "fa-cow",
+      Arctic: "fa-snowflake",
+      Domes: "fa-igloo",
+      Islands: "fa-ship"
+    }; %>
+
+    <% for (let cat in categoryIcons) { %>
+      <a
+        href="/listings?category=<%= cat %>"
+        class="filters"
+        style="text-decoration:none;color:inherit;"
+      >
+        <i class="fa-solid <%= categoryIcons[cat] %>"></i>
+        <p><%= cat %></p>
+      </a>
+    <% } %>
+  </div>
+
+  <!-- TAX SWITCH -->
+  <div class="tax-toggle">
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="switchCheckReverse">
+      <label class="form-check-label" for="switchCheckReverse">
+        Display total after taxes
+      </label>
     </div>
   </div>
-</body>
+</div>
+ </div>
+  <div class="row g-4">
+    <% for (let listing of allListings) { %>
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3">
+        <div class="card listing-card h-100">
+       <img 
+  src="<%= listing.image?.url || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80' %>" 
+  class="card-img-top" 
+  alt="listing image"
+/>
+
+
+
+          <div class="card-body d-flex flex-column">
+            <h6 class="card-title"><%= listing.title %></h6>
+            <p class="card-text text-muted mb-3">
+              ₹<%= listing.price.toLocaleString("en-IN") %> / night
+              <i class="tax-info"">&nbsp; &nbsp; +18% GST</i>
+            </p>
+            
+
+            <a href="/listings/<%= listing._id %>" class="btn btn-primary mt-auto w-100">
+              View
+            </a>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+ let taxSwitch = document.getElementById("switchCheckReverse");
+ taxSwitch.addEventListener("click", ()=>{
+  let taxInfo = document.getElementsByClassName("tax-info");
+  for(info of taxInfo){
+    if(info.style.display !="inline"){
+      info.style.display = "inline";
+  } else{
+      info.style.display = "none";
+  }
+}
+ });
+</script>

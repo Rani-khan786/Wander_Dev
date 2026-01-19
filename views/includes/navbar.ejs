@@ -1,17 +1,172 @@
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+<style>
+  /* ===========================
+   SEARCH BAR (Desktop)
+=========================== */
+.search-form {
+  display: flex;
+  align-items: center;
+}
+
+.search-inp {
+  border-radius: 25px 0 0 25px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  width: 280px;
+  border-right: none;
+}
+
+.search-btn {
+  background-color: #fe424d;
+  color: #fff;
+  border-radius: 0 25px 25px 0;
+  padding: 0.5rem 1.2rem;
+  border: 1px solid #ced4da;
+  border-left: none;
+  height: calc(2.5rem + 2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn:hover {
+  background-color: #fe424d;
+  color: #fff;
+}
+
+.search-inp:focus,
+.search-btn:focus {
+  box-shadow: none;
+}
+
+/* ===========================
+   KEEP DESKTOP PERFECT
+=========================== */
+@media (min-width: 768px) {
+  /* Search in center */
+  .search-form {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Right links stay right */
+  .navbar-nav.ms-md-auto {
+    margin-left: auto !important;
+  }
+}
+
+/* ===========================
+   MOBILE GLASSMORPHISM NAV
+=========================== */
+@media (max-width: 767px) {
+
+  /* Collapse becomes floating glass panel */
+  .glass-collapse {
+    margin-top: 12px;
+    padding: 16px;
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+
+    animation: slideDown 0.35s ease forwards;
+  }
+
+  /* Smooth slide down effect */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+  }
+
+  /* Stack nav links vertically */
+  .navbar-nav {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Search should come LAST */
+  .search-form {
+    width: 100%;
+    margin-top: 14px;
+  }
+
+  .search-inp {
+    width: 100%;
+    flex: 1;
+  }
+
+  /* Make search input + button look clean */
+  .search-btn {
+    padding: 0.5rem 1rem;
+  }
+}
+
+</style>
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top glass-nav">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">
-      <i class="fa-solid fa-compass "></i> 
+
+    <a class="navbar-brand" href="/listings">
+      <i class="fa-solid fa-compass"></i>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+
+    <button
+      class="navbar-toggler shadow-none"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+    <!-- COLLAPSE -->
+    <div class="collapse navbar-collapse glass-collapse" id="navbarNavAltMarkup">
+
+      <!-- LEFT LINKS -->
       <div class="navbar-nav">
-        <a class="nav-link" href="/">Home</a>
-        <a class="nav-link" href="/listings">All Listings</a>
-        <a class="nav-link" href="/listings/new">Add New Listing</a>
+        <a class="nav-link" href="/listings">Explore</a>
       </div>
+
+      <!-- RIGHT LINKS -->
+      <div class="navbar-nav ms-md-auto">
+        <a class="nav-link" href="/listings/new">Airbnb your home</a>
+
+        <% if(!currUser){ %>
+          <a class="nav-link" href="/signup"><b>Sign up</b></a>
+          <a class="nav-link" href="/login"><b>Log in</b></a>
+        <% } %>
+
+        <% if(currUser){ %>
+          <a class="nav-link" href="/logout"><b>Log out</b></a>
+        <% } %>
+      </div>
+
+      <!-- SEARCH AT LAST -->
+      <form class="d-flex search-form ms-md-3" role="search" action="/listings" method="GET">
+        <input 
+          class="form-control search-inp" 
+          type="search" 
+          name="search"
+          placeholder="Search listings..." 
+          value="<%= typeof search !== 'undefined' ? search : '' %>"
+        />
+        <button class="btn search-btn" type="submit">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+
     </div>
   </div>
 </nav>

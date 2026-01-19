@@ -1,0 +1,22 @@
+<% if (success && success.length) { %>
+  <div class="flash-wrapper">
+    <div class="alert alert-success flash-message">
+      <i class="fa-solid fa-circle-check flash-icon success-icon"></i>
+      <span class="flash-text"><%= success[0] %></span>
+      <button type="button" class="flash-close">&times;</button>
+    </div>
+  </div>
+<% } %>
+
+<% if (error && error.length) { %>
+  <div class="flash-wrapper">
+    <div class="alert alert-danger flash-message">
+      <i class="fa-solid fa-circle-exclamation flash-icon error-icon"></i>
+      <span class="flash-text"><%= error[0] %></span>
+      <button type="button" class="flash-close">&times;</button>
+    </div>
+  </div>
+<% } %>
+
+
+
